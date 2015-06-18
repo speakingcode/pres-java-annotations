@@ -295,5 +295,5 @@ public class Demo {
 
 
 Sources:
-https://docs.oracle.com/javase/tutorial/java/annotations/
-http://isagoksu.com/2009/creating-custom-annotations-and-making-use-of-them/
+- https://docs.oracle.com/javase/tutorial/java/annotations/
+- http://isagoksu.com/2009/creating-custom-annotations-and-making-use-of-them/
