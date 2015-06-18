@@ -143,26 +143,88 @@ This form of annotation is called a type annotation
 ### Annotations That Apply to Other Annotations (Meta-annotations)
 
  - ```@Retention``` - specifies how the marked annotation is stored:
-  - RetentionPolicy.SOURCE – The marked annotation is retained only in the source level and is ignored by the compiler.
-  - RetentionPolicy.CLASS – The marked annotation is retained by the compiler at compile time, but is ignored by the Java Virtual Machine (JVM).
-  - RetentionPolicy.RUNTIME – The marked annotation is retained by the JVM so it can be used by the runtime environment.
+  - ```RetentionPolicy.SOURCE``` – The marked annotation is retained only in the source level and is ignored by the compiler.
+  - ```RetentionPolicy.CLASS``` – The marked annotation is retained by the compiler at compile time, but is ignored by the Java Virtual Machine (JVM).
+  - ```RetentionPolicy.RUNTIME``` – The marked annotation is retained by the JVM so it can be used by the runtime environment.
 
 - ```@Documented``` - indicates that whenever the specified annotation is used those elements should be documented using the Javadoc tool. (By default, annotations are not included in Javadoc.) For more information, see the Javadoc tools page.
 
-  - ```@Target``` - marks another annotation to restrict what kind of Java elements the annotation can be applied to. A target annotation specifies one of the following element types as its value:
-  - ElementType.ANNOTATION_TYPE can be applied to an annotation type.
-  - ElementType.CONSTRUCTOR can be applied to a constructor.
-  - ElementType.FIELD can be applied to a field or property.
-  - ElementType.LOCAL_VARIABLE can be applied to a local variable.
-  - ElementType.METHOD can be applied to a method-level annotation.
-  - ElementType.PACKAGE can be applied to a package declaration.
-  - ElementType.PARAMETER can be applied to the parameters of a method.
-  - ElementType.TYPE can be applied to any element of a class.
+- ```@Target``` - marks another annotation to restrict what kind of Java elements the annotation can be applied to. A target annotation specifies one of the following element types as its value:
+  - ```ElementType.ANNOTATION_TYPE``` can be applied to an annotation type.
+  - ```ElementType.CONSTRUCTOR``` can be applied to a constructor.
+  - ```ElementType.FIELD``` can be applied to a field or property.
+  - ```ElementType.LOCAL_VARIABLE``` can be applied to a local variable.
+  - ```ElementType.METHOD``` can be applied to a method-level annotation.
+  - ```ElementType.PACKAGE``` can be applied to a package declaration.
+  - ```ElementType.PARAMETER``` can be applied to the parameters of a method.
+  - ```ElementType.TYPE``` can be applied to any element of a class.
 
 - ```@Inherited``` - indicates that the annotation type can be inherited from the super class. (This is not true by default.) When the user queries the annotation type and the class has no annotation for this type, the class' superclass is queried for the annotation type. This annotation applies only to class declarations.
 
 - ```@Repeatable``` (Java 1.8) - indicates that the marked annotation can be applied more than once to the same declaration or type use. For more information, see Repeating Annotations.
 
+## Declaring an Annotation Type
+
+Annotation type definitions looks similar to an interface definition with the at-sign (@ = AT, as in annotation type). Annotation types are a form of interface.
+
+The body of annotation definitions contains *annotation type element* declarations, which look a lot like methods. Note that they can define optional default values.
+
+```java
+public class Generation3List extends Generation2List {
+
+   // Author: John Doe
+   // Date: 3/17/2002
+   // Current revision: 6
+   // Last modified: 4/12/2004
+   // By: Jane Doe
+   // Reviewers: Alice, Bill, Cindy
+
+   // class code goes here
+
+}
+```
+
+Same metadata, with an annotation:
+
+```java
+@interface ClassPreamble {
+   String author();
+   String date();
+   int currentRevision() default 1;
+   String lastModified() default "N/A";
+   String lastModifiedBy() default "N/A";
+   // Note use of array
+   String[] reviewers();
+}
+```
+
+Use:
+
+```java
+@ClassPreamble (
+   author = "John Doe",
+   date = "3/17/2002",
+   currentRevision = 6,
+   lastModified = "4/12/2004",
+   lastModifiedBy = "Jane Doe",
+   // Note array notation
+   reviewers = {"Alice", "Bob", "Cindy"}
+)
+public class Generation3List extends Generation2List {
+// class code goes here
+}
+```
+
+Note: To make the information in @```ClassPreamble``` appear in Javadoc-generated documentation, you must annotate the ```@ClassPreamble``` definition with the ```@Documented``` annotation:
+
+```java
+import java.lang.annotation.*;
+
+@Documented
+@interface ClassPreamble {
+   // Annotation element definition
+}
+```
 
 Sources:
 https://docs.oracle.com/javase/tutorial/java/annotations/
