@@ -225,6 +225,75 @@ import java.lang.annotation.*;
    // Annotation element definition
 }
 ```
+## Do Something Useful with Annotations
+
+Let's make a simple implmentation of J-Unit's ```@Test``` annotation.
+
+### Define the Annotation
+
+```java
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Test {
+   //to specify expected Exceptions
+   Class expected();
+}
+```
+
+### Write a Parser
+Basic idea: use Java reflections to access the annotation information/attributes
+
+```java
+public class TestAnnotationParser {
+   public void parse(Class<?> klass) throws Exception {
+      Method[] methods = klass.getMethods();
+      int pass = 0;
+      int fail = 0;
+      for (Method method : methods) {
+         if (method.isAnnotationPresent(Test.class)) {
+            // this is how you access the annotation elements
+            Test test = method.getAnnotation(Test.class);
+            Class expected = test.expected();
+            try {
+               method.invoke(null);
+               pass++;
+            } catch (Exception e) {
+               if (Exception.class != expected) {
+                  fail++;
+               } else {
+                  System.out.println("Expected exception encountered. No worries, man!");
+                  pass++;
+               }
+            }
+         }
+      }
+   }
+}
+```
+
+### Use the Annotation
+
+```java
+class MyTest {
+   @Test(expected NullPointerException)
+   public void foo() throws NullPointerException{
+      throw new NullPointerException()
+   }
+}
+```
+
+### Put it Together
+
+```java
+public class Demo {
+   public static void main(String[] args) throws Exception {
+      TestAnnotationParser parser = new TestAnnotationParser();
+      parser.parse(MyTest.class);
+   }
+}
+```
+
 
 Sources:
 https://docs.oracle.com/javase/tutorial/java/annotations/
+http://isagoksu.com/2009/creating-custom-annotations-and-making-use-of-them/
